@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEET 2027 Study Squad Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
+
+  <!-- Top Navigation & Countdown -->
+  <header class="border-b border-slate-800 bg-slate-900/60 sticky top-0 backdrop-blur z-20">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-stethoscope text-emerald-400 text-2xl"></i>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">NEET 2027 Squad Tracker</h1>
+          <p class="text-xs text-slate-400">Physics • Chemistry • Biology</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Target: May 2, 2027</span>
+        <div id="countdown" class="font-mono text-emerald-400 font-bold text-sm">--d --h --m</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <main class="max-w-7xl mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Column 1: Daily Log & Study Hours Entry -->
+    <section class="space-y-6">
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+        <h2 class="text-base font-semibold text-slate-200 mb-4 flex items-center gap-2">
+          <i class="fa-regular fa-clock text-emerald-400"></i> Log Daily Study Hours
+        </h2>
+        <form id="studyForm" class="space-y-3">
+          <div>
+            <label class="text-xs text-slate-400">Friend / Member</label>
+            <select id="studyMember" class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm focus:ring-1 focus:ring-emerald-500 outline-none">
+              <!-- Dynamically Populated -->
+            </select>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="text-xs text-slate-400">Physics (hrs)</label>
+              <input type="number" step="0.5" min="0" max="16" id="hrsPhysics" required placeholder="0" class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">Chemistry (hrs)</label>
+              <input type="number" step="0.5" min="0" max="16" id="hrsChemistry" required placeholder="0" class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">Biology (hrs)</label>
+              <input type="number" step="0.5" min="0" max="16" id="hrsBiology" required placeholder="0" class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400">MCQs Solved Today</label>
+            <input type="number" id="mcqsSolved" min="0" placeholder="e.g. 90" class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-lg text-sm transition">
+            Add to Group Log
+          </button>
+        </form>
+      </div>
+
+      <!-- Add Friend to Group -->
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+        <h2 class="text-base font-semibold text-slate-200 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-sky-400"></i> Add Study Partner
+        </h2>
+        <div class="flex gap-2">
+          <input type="text" id="newMemberName" placeholder="Enter friend's name" class="bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm flex-1 outline-none">
+          <button id="addMemberBtn" class="bg-sky-600 hover:bg-sky-500 px-4 py-2 rounded-lg text-sm font-medium transition">Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Column 2: Squad Leaderboard & Mock Test Records -->
+    <section class="space-y-6">
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+        <h2 class="text-base font-semibold text-slate-200 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-amber-400"></i> Squad Activity Leaderboard
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="text-xs uppercase bg-slate-800/60 text-slate-400">
+              <tr>
+                <th class="p-2.5">Name</th>
+                <th class="p-2.5">Total Hrs</th>
+                <th class="p-2.5">MCQs</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Log Mock Test -->
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+        <h2 class="text-base font-semibold text-slate-200 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-chart-line text-purple-400"></i> Record Mock Test Score
+        </h2>
+        <form id="mockForm" class="space-y-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-xs text-slate-400">Candidate</label>
+              <select id="mockMember" class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none"></select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">Score (/720)</label>
+              <input type="number" id="mockScore" max="720" min="0" placeholder="e.g. 640" required class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400">Test Series / Chapter</label>
+            <input type="text" id="mockName" placeholder="e.g. Allen Minor 1 / Full Syllabus" required class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
+          </div>
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-medium py-2 rounded-lg text-sm transition">
+            Save Test Score
+          </button>
+        </form>
+        <div id="mockList" class="mt-4 space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+      </div>
+    </section>
+
+    <!-- Column 3: Syllabus Backlog & Revision Checklist -->
+    <section class="space-y-6">
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+        <h2 class="text-base font-semibold text-slate-200 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-emerald-400"></i> Backlog & Chapter Tasks
+        </h2>
+        <div class="flex gap-2 mb-3">
+          <input type="text" id="taskInput" placeholder="e.g. Ray Optics 50 MCQs" class="bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm flex-1 outline-none">
+          <select id="taskSubject" class="bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-slate-300">
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Biology">Biology</option>
+          </select>
+          <button id="addTaskBtn" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-2 rounded-lg text-sm transition">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+        <ul id="taskList" class="space-y-2 max-h-80 overflow-y-auto pr-1 text-sm">
+          <!-- Populated via JS -->
+        </ul>
+      </div>
+
+      <!-- Quick Reset / Export -->
+      <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl flex justify-between items-center text-xs text-slate-400">
+        <span>Data saved automatically in your browser</span>
+        <button id="clearDataBtn" class="text-red-400 hover:underline">Reset Data</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Target NEET 2027 Date (Tentative First Sunday: May 2, 2027)
+    const targetDate = new Date("May 2, 2027 09:00:00").getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference <= 0) {
+        document.getElementById("countdown").innerText = "Exam Day!";
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+
+      document.getElementById("countdown").innerText = `${days}d ${hours}h ${minutes}m left`;
+    }
+    setInterval(updateCountdown, 60000);
+    updateCountdown();
+
+    // Local Storage State
+    let squad = JSON.parse(localStorage.getItem("neetSquad")) || [
+      { name: "You", physics: 0, chem: 0, bio: 0, mcqs: 0 },
+      { name: "Friend 1", physics: 0, chem: 0, bio: 0, mcqs: 0 }
+    ];
+
+    let mocks = JSON.parse(localStorage.getItem("neetMocks")) || [];
+    let tasks = JSON.parse(localStorage.getItem("neetTasks")) || [
+      { id: 1, text: "Genetics: NCERT Line-by-Line Reading", subject: "Biology", done: false },
+      { id: 2, text: "Thermodynamics: PYQs 2018-2026", subject: "Physics", done: false }
+    ];
+
+    function saveState() {
+      localStorage.setItem("neetSquad", JSON.stringify(squad));
+      localStorage.setItem("neetMocks", JSON.stringify(mocks));
+      localStorage.setItem("neetTasks", JSON.stringify(tasks));
+    }
+
+    function renderSquadUI() {
+      const studyMember = document.getElementById("studyMember");
+      const mockMember = document.getElementById("mockMember");
+      const leaderboard = document.getElementById("leaderboardBody");
+
+      studyMember.innerHTML = "";
+      mockMember.innerHTML = "";
+      leaderboard.innerHTML = "";
+
+      // Sort leaderboard by total hours descending
+      const sorted = [...squad].sort((a, b) => (b.physics + b.chem + b.bio) - (a.physics + a.chem + a.bio));
+
+      squad.forEach(m => {
+        studyMember.innerHTML += `<option value="${m.name}">${m.name}</option>`;
+        mockMember.innerHTML += `<option value="${m.name}">${m.name}</option>`;
+      });
+
+      sorted.forEach((m, idx) => {
+        const totalHrs = (m.physics + m.chem + m.bio).toFixed(1);
+        leaderboard.innerHTML += `
+          <tr class="border-b border-slate-800">
+            <td class="p-2.5 font-medium flex items-center gap-2">
+              <span class="text-xs text-slate-500">#${idx+1}</span> ${m.name}
+            </td>
+            <td class="p-2.5 text-emerald-400 font-semibold">${totalHrs} hrs</td>
+            <td class="p-2.5 text-slate-400">${m.mcqs}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function renderTasks() {
+      const list = document.getElementById("taskList");
+      list.innerHTML = "";
+      tasks.forEach(t => {
+        const tagColor = t.subject === "Physics" ? "bg-amber-950 text-amber-300 border-amber-800" :
+                         t.subject === "Chemistry" ? "bg-cyan-950 text-cyan-300 border-cyan-800" :
+                         "bg-emerald-950 text-emerald-300 border-emerald-800";
+        list.innerHTML += `
+          <li class="flex items-center justify-between p-2.5 bg-slate-800/60 rounded-xl border border-slate-800">
+            <div class="flex items-center gap-2">
+              <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})" class="accent-emerald-500 rounded">
+              <span class="${t.done ? 'line-through text-slate-500' : 'text-slate-200'}">${t.text}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] px-2 py-0.5 rounded border ${tagColor}">${t.subject}</span>
+              <button onclick="deleteTask(${t.id})" class="text-slate-500 hover:text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </li>
+        `;
+      });
+    }
+
+    function renderMocks() {
+      const list = document.getElementById("mockList");
+      list.innerHTML = "";
+      mocks.slice().reverse().forEach(m => {
+        list.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-800/40 p-2 rounded-lg border border-slate-800 text-xs">
+            <div>
+              <span class="font-medium text-slate-200">${m.name}</span>
+              <span class="text-slate-400 block">${m.test}</span>
+            </div>
+            <span class="font-mono text-purple-400 font-bold text-sm">${m.score}/720</span>
+          </div>
+        `;
+      });
+    }
+
+    // Handlers
+    document.getElementById("studyForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const memberName = document.getElementById("studyMember").value;
+      const p = parseFloat(document.getElementById("hrsPhysics").value) || 0;
+      const c = parseFloat(document.getElementById("hrsChemistry").value) || 0;
+      const b = parseFloat(document.getElementById("hrsBiology").value) || 0;
+      const mcqs = parseInt(document.getElementById("mcqsSolved").value) || 0;
+
+      const user = squad.find(m => m.name === memberName);
+      if (user) {
+        user.physics += p;
+        user.chem += c;
+        user.bio += b;
+        user.mcqs += mcqs;
+        saveState();
+        renderSquadUI();
+        e.target.reset();
+      }
+    });
+
+    document.getElementById("addMemberBtn").addEventListener("click", () => {
+      const input = document.getElementById("newMemberName");
+      const name = input.value.trim();
+      if (name && !squad.some(m => m.name.toLowerCase() === name.toLowerCase())) {
+        squad.push({ name, physics: 0, chem: 0, bio: 0, mcqs: 0 });
+        saveState();
+        renderSquadUI();
+        input.value = "";
+      }
+    });
+
+    document.getElementById("mockForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("mockMember").value;
+      const score = parseInt(document.getElementById("mockScore").value);
+      const test = document.getElementById("mockName").value.trim();
+      mocks.push({ name, score, test });
+      saveState();
+      renderMocks();
+      e.target.reset();
+    });
+
+    document.getElementById("addTaskBtn").addEventListener("click", () => {
+      const input = document.getElementById("taskInput");
+      const sub = document.getElementById("taskSubject").value;
+      const text = input.value.trim();
+      if (text) {
+        tasks.push({ id: Date.now(), text, subject: sub, done: false });
+        saveState();
+        renderTasks();
+        input.value = "";
+      }
+    });
+
+    window.toggleTask = (id) => {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.done = !task.done;
+        saveState();
+        renderTasks();
+      }
+    };
+
+    window.deleteTask = (id) => {
+      tasks = tasks.filter(t => t.id !== id);
+      saveState();
+      renderTasks();
+    };
+
+    document.getElementById("clearDataBtn").addEventListener("click", () => {
+      if (confirm("Reset all tracked group data and start fresh?")) {
+        localStorage.clear();
+        location.reload();
+      }
+    });
+
+    // Initial renders
+    renderSquadUI();
+    renderTasks();
+    renderMocks();
+  </script>
+</body>
+</html>
